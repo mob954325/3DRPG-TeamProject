@@ -61,11 +61,12 @@ public class Test_Player : MonoBehaviour
     Quaternion targetRotation = Quaternion.identity;                // 회전할 목표 회전값
     public float turnspeed = 10.0f;                                 // 회전 속도
 
-    [SerializeField]bool isAttack = false;                         // 공격했는지 확인
+    [SerializeField]bool isAttack = false;                          // 공격했는지 확인
    
     // Hashes
-    readonly int SpeedToHash = Animator.StringToHash("Speed");      // 이동용 파라미터
-    readonly int AttackToHash = Animator.StringToHash("Attack");    // 공격용 파라미터
+    readonly int SpeedToHash = Animator.StringToHash("Speed");              // 이동용 파라미터
+    readonly int AttackToHash = Animator.StringToHash("Attack");            // 공격용 파라미터
+    readonly int SheathingToHash = Animator.StringToHash("Sheathing");      // 무기 집어넣기 여부 애니메이션
 
     // delegate
     public Action OnAttacAction;
@@ -105,8 +106,7 @@ public class Test_Player : MonoBehaviour
 
     private void OnAttackInput(InputAction.CallbackContext context)
     {
-
-        if(context.performed && !isAttack)
+        if (context.performed && !isAttack)
         {
             isAttack = true;            // 공격 확인 
             animator.SetTrigger(AttackToHash);
