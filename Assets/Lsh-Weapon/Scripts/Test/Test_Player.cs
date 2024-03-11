@@ -66,7 +66,7 @@ public class Test_Player : MonoBehaviour
     // Hashes
     readonly int SpeedToHash = Animator.StringToHash("Speed");              // 이동용 파라미터
     readonly int AttackToHash = Animator.StringToHash("Attack");            // 공격용 파라미터
-    readonly int SheathingToHash = Animator.StringToHash("Sheathing");      // 무기 집어넣기 여부 애니메이션
+    readonly int IsEquipToHash = Animator.StringToHash("IsEquip");          // 무기장비착용 여부 애니메이션
 
     // delegate
     public Action OnAttacAction;
@@ -110,6 +110,7 @@ public class Test_Player : MonoBehaviour
         {
             isAttack = true;            // 공격 확인 
             animator.SetTrigger(AttackToHash);
+            animator.SetBool(IsEquipToHash, true);
         }
     }
 
