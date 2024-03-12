@@ -35,16 +35,16 @@ public class Test_Player : MonoBehaviour
         set
         {
             weaponState = value;
-
-            if(weaponState == WeaponState.Bow)
+            switch (weaponState)
             {
-                inputActions.Bow.Enable();
-                Debug.Log("활 활성화");
-            }
-            else
-            {
-                inputActions.Bow.Disable();
-                Debug.Log("활 비활성화");
+                case WeaponState.Sword:
+                    inputActions.Sword.Enable();
+                    inputActions.Bow.Disable();
+                    break;
+                case WeaponState.Bow:
+                    inputActions.Sword.Disable();
+                    inputActions.Bow.Enable();
+                    break;
             }
         }
     }
@@ -87,9 +87,15 @@ public class Test_Player : MonoBehaviour
     [SerializeField] float smoothInputSpeed = .2f;                  // SmoothDamp가 도달할 값 ( 값이 작을 수록 더 빨리 도달함 )
     float animMoveSpeed = 0f;                                       // 애니메이션 파라미터 전달용 함수
 
+    //rotate
+    Vector3 lookVector = Vector3.zero;                              // 마우스 인풋값
+    public GameObject followCam;                                    // Cinemachine이 바라보는 오브젝트
+    Quaternion camY;                                                // 메인 카메라 Y값
+    public float rotatePower = 5f;                                         // 회전값
+
     [SerializeField] Vector3 currentMoveVector = Vector3.zero;
     Quaternion targetRotation = Quaternion.identity;                // 회전할 목표 회전값
-    public float turnspeed = 10.0f;                                 // 회전 속도
+    //public float turnspeed = 10.0f;                                 // 회전 속도
 
     [SerializeField]bool isAttack = false;                          // 공격했는지 확인
    
@@ -108,39 +114,56 @@ public class Test_Player : MonoBehaviour
         animator = GetComponent<Animator>();
 
         PlayerMoveState = MoveState.Idle;
+        CurrentWeaponState = WeaponState.Sword;
 
         OnAttackEnd += DisableIsAttack;
     }
 
     void OnEnable()
     {
-        inputActions.Sword.Enable();
-        inputActions.Sword.Move.performed += OnMoveInput;
-        inputActions.Sword.Move.canceled += OnMoveInput;
+        inputActions.Main.Enable();
+        inputActions.Main.Move.performed += OnMoveInput;
+        inputActions.Main.Move.canceled += OnMoveInput;
+        inputActions.Main.Sprint.performed += OnSpritInput;
+        inputActions.Main.Sprint.canceled += OnSpritInput;
+
+        inputActions.Main.Look.performed += OnLookInput;
+        inputActions.Main.Look.canceled += OnLookInput;
+
+        inputActions.Main.SwitchWeapon.performed += OnWeaponSwitchInput;
+
         inputActions.Sword.Attack.performed += OnAttackInput;
         inputActions.Sword.Attack.canceled += OnAttackInput;
-        inputActions.Sword.Sprint.performed += OnSpritInput;
-        inputActions.Sword.Sprint.canceled += OnSpritInput;
-        //inputActions.Sword.Look.performed += OnLookInput;
+
         inputActions.Bow.Shot.performed += OnBowShotInput;
         inputActions.Bow.AimDown.performed += OnAimDownInput;
     }
 
     void OnDisable()
     {
-        //inputActions.Sword.Look.performed -= OnLookInput;
-        inputActions.Sword.Sprint.canceled -= OnSpritInput;
-        inputActions.Sword.Sprint.performed -= OnSpritInput;
+        inputActions.Bow.AimDown.performed -= OnAimDownInput;
+        inputActions.Bow.Shot.performed -= OnBowShotInput;
+
         inputActions.Sword.Attack.canceled -= OnAttackInput;
         inputActions.Sword.Attack.performed -= OnAttackInput;
-        inputActions.Sword.Move.canceled -= OnMoveInput;
-        inputActions.Sword.Move.performed -= OnMoveInput;
+
+        inputActions.Main.Look.canceled -= OnLookInput;
+        inputActions.Main.Look.performed -= OnLookInput;
+
+        inputActions.Main.Sprint.canceled -= OnSpritInput;
+        inputActions.Main.Sprint.performed -= OnSpritInput;
+        inputActions.Main.Move.canceled -= OnMoveInput;
+        inputActions.Main.Move.performed -= OnMoveInput;
+
+        inputActions.Main.Disable();      
         inputActions.Sword.Disable();      
         inputActions.Bow.Disable();      
     }
 
     void Update()
     {
+        LookRotation();
+
         if (!isAttack)
             OnMove();
     }
@@ -164,14 +187,12 @@ public class Test_Player : MonoBehaviour
 
         inputDirection.x = inputVector.x;
         inputDirection.z = inputVector.y;
-        
+
         if (context.performed)
         {
-            // turn
-            Quaternion camY = Quaternion.Euler(0, Camera.main.transform.eulerAngles.y, 0); // 카메라 Y값
-            inputDirection = camY * inputDirection;                                     // 카메라 기준 회전값
-            targetRotation = Quaternion.LookRotation(inputDirection);                   // 회전할 방향값
-
+            camY = Quaternion.Euler(0, Camera.main.transform.localEulerAngles.y, 0);           // 카메라 Y값
+            inputDirection = camY * inputDirection;                                          // 카메라 기준 회전값
+            targetRotation = Quaternion.LookRotation(inputDirection * Time.deltaTime);       // 회전할 방향값
             PlayerMoveState = MoveState.Walk;
         }
         else
@@ -188,24 +209,51 @@ public class Test_Player : MonoBehaviour
         }
     }
 
+    public bool isLook = false;
     private void OnLookInput(InputAction.CallbackContext context)
     {
-        Vector3 mousepos = context.ReadValue<Vector2>();
-        Debug.Log(mousepos);
+        if(context.performed)
+        {
+            isLook = true;
+            lookVector = context.ReadValue<Vector2>();
+        }
+        if(!context.performed)
+        {
+            isLook = false;
+        }
+    }
+
+    private void OnWeaponSwitchInput(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            switch (weaponState)
+            {
+                case WeaponState.Sword:
+                    CurrentWeaponState = WeaponState.Bow;
+                    break;
+                case WeaponState.Bow:
+                    CurrentWeaponState = WeaponState.Sword;
+                    break;
+            }
+        }
     }
 
     private void OnAimDownInput(InputAction.CallbackContext context)
     {
-        if (context.performed)
+        if (context.performed && !animator.GetBool("AimDown"))
         {
+            animator.SetTrigger("RangeAttack");
+            animator.SetBool("AimDown", true);
             Debug.Log("화살 조준");
         }
     }
 
     private void OnBowShotInput(InputAction.CallbackContext context)
     {
-        if (context.performed)
+        if (context.performed && animator.GetBool("AimDown"))
         {
+            animator.SetBool("AimDown", false);
             Debug.Log("화살 발사");
         }
     }
@@ -215,13 +263,50 @@ public class Test_Player : MonoBehaviour
     /// </summary>
     void OnMove()
     {
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * turnspeed);     // 회전
 
-        currentMoveVector = Vector3.SmoothDamp(currentMoveVector, inputDirection, ref smoothInputVelocity, smoothInputSpeed);   // 움직임 보정
+        // turn
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);     // 회전
+
+        currentMoveVector = Vector3.SmoothDamp(currentMoveVector, inputDirection, ref smoothInputVelocity, smoothInputSpeed);   // 움직임 보정\
+
         controller.Move(Time.fixedDeltaTime * currentMoveVector * moveSpeed);   // 플레이어 움직임
 
         animator.SetFloat(SpeedToHash, animMoveSpeed);  // 애니메이션 파라미터 변경
-    }    
+    }
+
+    void LookRotation()
+    {
+        if (!isLook)
+            return;
+
+        #region Rotation
+
+        followCam.transform.localRotation *= Quaternion.AngleAxis(lookVector.x * rotatePower, Vector3.up);
+        followCam.transform.localRotation *= Quaternion.AngleAxis(-lookVector.y * rotatePower, Vector3.right);
+
+        var angles = followCam.transform.localEulerAngles;
+        angles.z = 0;
+
+        var angle = followCam.transform.localEulerAngles.x;
+
+        if (angle > 180 && angle < 340)
+        {
+            angles.x = 340;
+        }
+        else if (angle < 180 && angle > 40)
+        {
+            angles.x = 40;
+        }
+
+        followCam.transform.localEulerAngles = angles;
+
+        //transform.rotation = Quaternion.Euler(0, followCam.transform.rotation.eulerAngles.y + targetRotation, 0);
+
+        followCam.transform.localEulerAngles = new Vector3(angles.x, angles.y, 0);
+
+        #endregion
+
+    }
 
     void DisableIsAttack()
     {

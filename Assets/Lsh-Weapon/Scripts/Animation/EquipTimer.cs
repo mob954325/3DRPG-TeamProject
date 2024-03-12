@@ -8,7 +8,7 @@ public class EquipTimer : StateMachineBehaviour
     const float endEquipTime = 5f;
 
     readonly int IsEquipToHash = Animator.StringToHash("IsEquip");
-    readonly int SheathingToHash = Animator.StringToHash("Sheathing");
+    readonly int SheathingToHash = Animator.StringToHash("Sheathing Sword");
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
