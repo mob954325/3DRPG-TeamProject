@@ -14,10 +14,40 @@ enum MoveState
     Sprint,
 }
 
+enum WeaponState
+{
+    Sword = 0,
+    Bow
+}
+
 // Player-Weapon 테스트 인풋용 스크립트
 public class Test_Player : MonoBehaviour
 {
-    MoveState moveState;    // 움직임 상태 Enum
+
+    // 버튼으로 무기 교체 추가하고 활 인풋 실험
+
+    MoveState moveState;        // 움직임 상태 Enum
+    [SerializeField] WeaponState weaponState;    // 현재 가지고 있는 무기 Enum
+
+    WeaponState CurrentWeaponState
+    {
+        get => weaponState;
+        set
+        {
+            weaponState = value;
+
+            if(weaponState == WeaponState.Bow)
+            {
+                inputActions.Bow.Enable();
+                Debug.Log("활 활성화");
+            }
+            else
+            {
+                inputActions.Bow.Disable();
+                Debug.Log("활 비활성화");
+            }
+        }
+    }
 
     /// <summary>
     /// 플레이어 움직임 상태에 따른 변수값 변경 프로퍼티
@@ -69,7 +99,7 @@ public class Test_Player : MonoBehaviour
     readonly int IsEquipToHash = Animator.StringToHash("IsEquip");          // 무기장비착용 여부 애니메이션
 
     // delegate
-    public Action OnAttacAction;
+    public Action OnAttackEnd;  // 플레이어 공격이 종료되면 실행되는 델리게이트
 
     void Awake()
     {
@@ -79,33 +109,47 @@ public class Test_Player : MonoBehaviour
 
         PlayerMoveState = MoveState.Idle;
 
-        OnAttacAction += DisableIsAttack;
+        OnAttackEnd += DisableIsAttack;
     }
 
     void OnEnable()
     {
-        inputActions.Enable();
-        inputActions.Nomal.Move.performed += OnMoveInput;
-        inputActions.Nomal.Move.canceled += OnMoveInput;
-        inputActions.Nomal.Attack.performed += OnAttackInput;
-        inputActions.Nomal.Attack.canceled += OnAttackInput;
-        inputActions.Nomal.Sprint.performed += OnSpritInput;
-        inputActions.Nomal.Sprint.canceled += OnSpritInput;
+        inputActions.Sword.Enable();
+        inputActions.Sword.Move.performed += OnMoveInput;
+        inputActions.Sword.Move.canceled += OnMoveInput;
+        inputActions.Sword.Attack.performed += OnAttackInput;
+        inputActions.Sword.Attack.canceled += OnAttackInput;
+        inputActions.Sword.Sprint.performed += OnSpritInput;
+        inputActions.Sword.Sprint.canceled += OnSpritInput;
+        //inputActions.Sword.Look.performed += OnLookInput;
+        inputActions.Bow.Shot.performed += OnBowShotInput;
+        inputActions.Bow.AimDown.performed += OnAimDownInput;
     }
 
     void OnDisable()
     {
-        inputActions.Nomal.Sprint.canceled -= OnSpritInput;
-        inputActions.Nomal.Sprint.performed -= OnSpritInput;
-        inputActions.Nomal.Attack.canceled -= OnAttackInput;
-        inputActions.Nomal.Attack.performed -= OnAttackInput;
-        inputActions.Nomal.Move.canceled -= OnMoveInput;
-        inputActions.Nomal.Move.performed -= OnMoveInput;
-        inputActions.Disable();      
+        //inputActions.Sword.Look.performed -= OnLookInput;
+        inputActions.Sword.Sprint.canceled -= OnSpritInput;
+        inputActions.Sword.Sprint.performed -= OnSpritInput;
+        inputActions.Sword.Attack.canceled -= OnAttackInput;
+        inputActions.Sword.Attack.performed -= OnAttackInput;
+        inputActions.Sword.Move.canceled -= OnMoveInput;
+        inputActions.Sword.Move.performed -= OnMoveInput;
+        inputActions.Sword.Disable();      
+        inputActions.Bow.Disable();      
     }
 
-    private void OnAttackInput(InputAction.CallbackContext context)
+    void Update()
     {
+        if (!isAttack)
+            OnMove();
+    }
+
+    private void OnAttackInput(InputAction.CallbackContext context) // 근접무기
+    {
+        if (weaponState == WeaponState.Bow)
+            return;
+
         if (context.performed && !isAttack)
         {
             isAttack = true;            // 공격 확인 
@@ -144,11 +188,26 @@ public class Test_Player : MonoBehaviour
         }
     }
 
-
-    void Update()
+    private void OnLookInput(InputAction.CallbackContext context)
     {
-        if(!isAttack)
-            OnMove();
+        Vector3 mousepos = context.ReadValue<Vector2>();
+        Debug.Log(mousepos);
+    }
+
+    private void OnAimDownInput(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            Debug.Log("화살 조준");
+        }
+    }
+
+    private void OnBowShotInput(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            Debug.Log("화살 발사");
+        }
     }
 
     /// <summary>

@@ -24,7 +24,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     ""name"": ""PlayerInputActions"",
     ""maps"": [
         {
-            ""name"": ""Nomal"",
+            ""name"": ""Sword"",
             ""id"": ""db15c05f-39cc-4cfa-852e-08464ca51a66"",
             ""actions"": [
                 {
@@ -46,15 +46,6 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Aimdown"",
-                    ""type"": ""Button"",
-                    ""id"": ""d5ffc466-cf69-4215-a046-b8afebc01c74"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""Sprint"",
                     ""type"": ""Button"",
                     ""id"": ""ad6a75a4-40e9-4633-aab5-5e88613d10ab"",
@@ -62,6 +53,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Look"",
+                    ""type"": ""Value"",
+                    ""id"": ""d0e1d03f-c34c-4ee1-8eb9-9661baa4589a"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -133,23 +133,71 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""6f12025c-47b1-4efe-a210-b922ca8055d4"",
-                    ""path"": ""<Mouse>/rightButton"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""KeyBoard-Mouse"",
-                    ""action"": ""Aimdown"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""e50b447b-fe89-425c-b491-cd924a03ffcb"",
                     ""path"": ""<Keyboard>/leftShift"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Sprint"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""757e0cc5-6b6d-433c-acf3-d2414c5ecfe0"",
+                    ""path"": ""<Mouse>/delta"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Look"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""Bow"",
+            ""id"": ""af823281-cf9d-4059-87a9-89bbbc68c99b"",
+            ""actions"": [
+                {
+                    ""name"": ""AimDown"",
+                    ""type"": ""Button"",
+                    ""id"": ""b4becaa8-105b-40db-adc2-2599ce66990b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Shot"",
+                    ""type"": ""Button"",
+                    ""id"": ""056889f2-0498-45ad-8ef9-9120a96c4f5e"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""8016e02a-f5c3-49ec-9318-7252a47b10ad"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""AimDown"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b7ce7d56-fb6b-4525-afe0-7bd062cd1671"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Shot"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -175,12 +223,16 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         }
     ]
 }");
-        // Nomal
-        m_Nomal = asset.FindActionMap("Nomal", throwIfNotFound: true);
-        m_Nomal_Move = m_Nomal.FindAction("Move", throwIfNotFound: true);
-        m_Nomal_Attack = m_Nomal.FindAction("Attack", throwIfNotFound: true);
-        m_Nomal_Aimdown = m_Nomal.FindAction("Aimdown", throwIfNotFound: true);
-        m_Nomal_Sprint = m_Nomal.FindAction("Sprint", throwIfNotFound: true);
+        // Sword
+        m_Sword = asset.FindActionMap("Sword", throwIfNotFound: true);
+        m_Sword_Move = m_Sword.FindAction("Move", throwIfNotFound: true);
+        m_Sword_Attack = m_Sword.FindAction("Attack", throwIfNotFound: true);
+        m_Sword_Sprint = m_Sword.FindAction("Sprint", throwIfNotFound: true);
+        m_Sword_Look = m_Sword.FindAction("Look", throwIfNotFound: true);
+        // Bow
+        m_Bow = asset.FindActionMap("Bow", throwIfNotFound: true);
+        m_Bow_AimDown = m_Bow.FindAction("AimDown", throwIfNotFound: true);
+        m_Bow_Shot = m_Bow.FindAction("Shot", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -239,45 +291,45 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         return asset.FindBinding(bindingMask, out action);
     }
 
-    // Nomal
-    private readonly InputActionMap m_Nomal;
-    private List<INomalActions> m_NomalActionsCallbackInterfaces = new List<INomalActions>();
-    private readonly InputAction m_Nomal_Move;
-    private readonly InputAction m_Nomal_Attack;
-    private readonly InputAction m_Nomal_Aimdown;
-    private readonly InputAction m_Nomal_Sprint;
-    public struct NomalActions
+    // Sword
+    private readonly InputActionMap m_Sword;
+    private List<ISwordActions> m_SwordActionsCallbackInterfaces = new List<ISwordActions>();
+    private readonly InputAction m_Sword_Move;
+    private readonly InputAction m_Sword_Attack;
+    private readonly InputAction m_Sword_Sprint;
+    private readonly InputAction m_Sword_Look;
+    public struct SwordActions
     {
         private @PlayerInputActions m_Wrapper;
-        public NomalActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Move => m_Wrapper.m_Nomal_Move;
-        public InputAction @Attack => m_Wrapper.m_Nomal_Attack;
-        public InputAction @Aimdown => m_Wrapper.m_Nomal_Aimdown;
-        public InputAction @Sprint => m_Wrapper.m_Nomal_Sprint;
-        public InputActionMap Get() { return m_Wrapper.m_Nomal; }
+        public SwordActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Move => m_Wrapper.m_Sword_Move;
+        public InputAction @Attack => m_Wrapper.m_Sword_Attack;
+        public InputAction @Sprint => m_Wrapper.m_Sword_Sprint;
+        public InputAction @Look => m_Wrapper.m_Sword_Look;
+        public InputActionMap Get() { return m_Wrapper.m_Sword; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
         public bool enabled => Get().enabled;
-        public static implicit operator InputActionMap(NomalActions set) { return set.Get(); }
-        public void AddCallbacks(INomalActions instance)
+        public static implicit operator InputActionMap(SwordActions set) { return set.Get(); }
+        public void AddCallbacks(ISwordActions instance)
         {
-            if (instance == null || m_Wrapper.m_NomalActionsCallbackInterfaces.Contains(instance)) return;
-            m_Wrapper.m_NomalActionsCallbackInterfaces.Add(instance);
+            if (instance == null || m_Wrapper.m_SwordActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_SwordActionsCallbackInterfaces.Add(instance);
             @Move.started += instance.OnMove;
             @Move.performed += instance.OnMove;
             @Move.canceled += instance.OnMove;
             @Attack.started += instance.OnAttack;
             @Attack.performed += instance.OnAttack;
             @Attack.canceled += instance.OnAttack;
-            @Aimdown.started += instance.OnAimdown;
-            @Aimdown.performed += instance.OnAimdown;
-            @Aimdown.canceled += instance.OnAimdown;
             @Sprint.started += instance.OnSprint;
             @Sprint.performed += instance.OnSprint;
             @Sprint.canceled += instance.OnSprint;
+            @Look.started += instance.OnLook;
+            @Look.performed += instance.OnLook;
+            @Look.canceled += instance.OnLook;
         }
 
-        private void UnregisterCallbacks(INomalActions instance)
+        private void UnregisterCallbacks(ISwordActions instance)
         {
             @Move.started -= instance.OnMove;
             @Move.performed -= instance.OnMove;
@@ -285,29 +337,83 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Attack.started -= instance.OnAttack;
             @Attack.performed -= instance.OnAttack;
             @Attack.canceled -= instance.OnAttack;
-            @Aimdown.started -= instance.OnAimdown;
-            @Aimdown.performed -= instance.OnAimdown;
-            @Aimdown.canceled -= instance.OnAimdown;
             @Sprint.started -= instance.OnSprint;
             @Sprint.performed -= instance.OnSprint;
             @Sprint.canceled -= instance.OnSprint;
+            @Look.started -= instance.OnLook;
+            @Look.performed -= instance.OnLook;
+            @Look.canceled -= instance.OnLook;
         }
 
-        public void RemoveCallbacks(INomalActions instance)
+        public void RemoveCallbacks(ISwordActions instance)
         {
-            if (m_Wrapper.m_NomalActionsCallbackInterfaces.Remove(instance))
+            if (m_Wrapper.m_SwordActionsCallbackInterfaces.Remove(instance))
                 UnregisterCallbacks(instance);
         }
 
-        public void SetCallbacks(INomalActions instance)
+        public void SetCallbacks(ISwordActions instance)
         {
-            foreach (var item in m_Wrapper.m_NomalActionsCallbackInterfaces)
+            foreach (var item in m_Wrapper.m_SwordActionsCallbackInterfaces)
                 UnregisterCallbacks(item);
-            m_Wrapper.m_NomalActionsCallbackInterfaces.Clear();
+            m_Wrapper.m_SwordActionsCallbackInterfaces.Clear();
             AddCallbacks(instance);
         }
     }
-    public NomalActions @Nomal => new NomalActions(this);
+    public SwordActions @Sword => new SwordActions(this);
+
+    // Bow
+    private readonly InputActionMap m_Bow;
+    private List<IBowActions> m_BowActionsCallbackInterfaces = new List<IBowActions>();
+    private readonly InputAction m_Bow_AimDown;
+    private readonly InputAction m_Bow_Shot;
+    public struct BowActions
+    {
+        private @PlayerInputActions m_Wrapper;
+        public BowActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
+        public InputAction @AimDown => m_Wrapper.m_Bow_AimDown;
+        public InputAction @Shot => m_Wrapper.m_Bow_Shot;
+        public InputActionMap Get() { return m_Wrapper.m_Bow; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(BowActions set) { return set.Get(); }
+        public void AddCallbacks(IBowActions instance)
+        {
+            if (instance == null || m_Wrapper.m_BowActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_BowActionsCallbackInterfaces.Add(instance);
+            @AimDown.started += instance.OnAimDown;
+            @AimDown.performed += instance.OnAimDown;
+            @AimDown.canceled += instance.OnAimDown;
+            @Shot.started += instance.OnShot;
+            @Shot.performed += instance.OnShot;
+            @Shot.canceled += instance.OnShot;
+        }
+
+        private void UnregisterCallbacks(IBowActions instance)
+        {
+            @AimDown.started -= instance.OnAimDown;
+            @AimDown.performed -= instance.OnAimDown;
+            @AimDown.canceled -= instance.OnAimDown;
+            @Shot.started -= instance.OnShot;
+            @Shot.performed -= instance.OnShot;
+            @Shot.canceled -= instance.OnShot;
+        }
+
+        public void RemoveCallbacks(IBowActions instance)
+        {
+            if (m_Wrapper.m_BowActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IBowActions instance)
+        {
+            foreach (var item in m_Wrapper.m_BowActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_BowActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public BowActions @Bow => new BowActions(this);
     private int m_KeyBoardMouseSchemeIndex = -1;
     public InputControlScheme KeyBoardMouseScheme
     {
@@ -317,11 +423,16 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             return asset.controlSchemes[m_KeyBoardMouseSchemeIndex];
         }
     }
-    public interface INomalActions
+    public interface ISwordActions
     {
         void OnMove(InputAction.CallbackContext context);
         void OnAttack(InputAction.CallbackContext context);
-        void OnAimdown(InputAction.CallbackContext context);
         void OnSprint(InputAction.CallbackContext context);
+        void OnLook(InputAction.CallbackContext context);
+    }
+    public interface IBowActions
+    {
+        void OnAimDown(InputAction.CallbackContext context);
+        void OnShot(InputAction.CallbackContext context);
     }
 }

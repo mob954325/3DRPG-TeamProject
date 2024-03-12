@@ -16,6 +16,6 @@ public class AttackControl : StateMachineBehaviour
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        player.OnAttacAction?.Invoke();
+        player.OnAttackEnd?.Invoke();
     }
 }
