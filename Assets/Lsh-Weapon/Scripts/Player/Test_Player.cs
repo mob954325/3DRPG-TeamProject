@@ -23,7 +23,6 @@ enum WeaponState
 // Player-Weapon 테스트 인풋용 스크립트
 public class Test_Player : MonoBehaviour
 {
-
     // 버튼으로 무기 교체 추가하고 활 인풋 실험
 
     MoveState moveState;        // 움직임 상태 Enum
@@ -58,7 +57,6 @@ public class Test_Player : MonoBehaviour
         set
         {
             moveState = value;
-            Debug.Log(moveState);
             switch(moveState)
             {
                 case MoveState.Idle:
@@ -78,6 +76,7 @@ public class Test_Player : MonoBehaviour
     PlayerInputActions inputActions;
     CharacterController controller;
     Animator animator;
+    Sword sword;
 
     // Values
     Vector3 inputDirection = Vector3.zero;                          // 입력 받는 방향 벡터
@@ -91,7 +90,7 @@ public class Test_Player : MonoBehaviour
     Vector3 lookVector = Vector3.zero;                              // 마우스 인풋값
     public GameObject followCam;                                    // Cinemachine이 바라보는 오브젝트
     Quaternion camY;                                                // 메인 카메라 Y값
-    public float rotatePower = 5f;                                         // 회전값
+    public float rotatePower = 5f;                                  // 회전값
 
     [SerializeField] Vector3 currentMoveVector = Vector3.zero;
     Quaternion targetRotation = Quaternion.identity;                // 회전할 목표 회전값
@@ -102,7 +101,8 @@ public class Test_Player : MonoBehaviour
     // Hashes
     readonly int SpeedToHash = Animator.StringToHash("Speed");              // 이동용 파라미터
     readonly int AttackToHash = Animator.StringToHash("Attack");            // 공격용 파라미터
-    readonly int IsEquipToHash = Animator.StringToHash("IsEquip");          // 무기장비착용 여부 애니메이션
+    readonly int IsEquipToHash = Animator.StringToHash("IsEquip");          // 무기장비착용 여부 
+    readonly int IsWeaponBowToHash = Animator.StringToHash("IsWeaponBow");  // 현재 무기가 활인지 체크 ( true : 활 )
 
     // delegate
     public Action OnAttackEnd;  // 플레이어 공격이 종료되면 실행되는 델리게이트
@@ -112,6 +112,7 @@ public class Test_Player : MonoBehaviour
         inputActions = new PlayerInputActions();
         controller = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
+        sword = GetComponentInChildren<Sword>();
 
         PlayerMoveState = MoveState.Idle;
         CurrentWeaponState = WeaponState.Sword;
@@ -190,7 +191,7 @@ public class Test_Player : MonoBehaviour
 
         if (context.performed)
         {
-            camY = Quaternion.Euler(0, Camera.main.transform.localEulerAngles.y, 0);           // 카메라 Y값
+            camY = Quaternion.Euler(0, Camera.main.transform.localEulerAngles.y, 0);         // 카메라 Y값
             inputDirection = camY * inputDirection;                                          // 카메라 기준 회전값
             targetRotation = Quaternion.LookRotation(inputDirection * Time.deltaTime);       // 회전할 방향값
             PlayerMoveState = MoveState.Walk;
@@ -231,9 +232,11 @@ public class Test_Player : MonoBehaviour
             {
                 case WeaponState.Sword:
                     CurrentWeaponState = WeaponState.Bow;
+                    animator.SetBool(IsWeaponBowToHash, true);
                     break;
                 case WeaponState.Bow:
                     CurrentWeaponState = WeaponState.Sword;
+                    animator.SetBool(IsWeaponBowToHash, false);
                     break;
             }
         }
@@ -263,7 +266,6 @@ public class Test_Player : MonoBehaviour
     /// </summary>
     void OnMove()
     {
-
         // turn
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);     // 회전
 
@@ -311,5 +313,15 @@ public class Test_Player : MonoBehaviour
     void DisableIsAttack()
     {
         isAttack = false;
+    }
+
+    void WeaponColliderEnable()
+    {
+        sword.MeleeWeaponColliderEnable();
+    }
+
+    void WeaponColliderDisable()
+    {
+        sword.MeleeWeaponColliderDisable();
     }
 }
