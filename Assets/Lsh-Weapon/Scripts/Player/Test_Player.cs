@@ -71,23 +71,36 @@ public class Test_Player : MonoBehaviour
 
     #endregion
 
-    // Components
-    Sword sword;
 
     // delegate
+
+    /// <summary>
+    /// 무기 교체시 실행하는 델리게이트 , key 1 (true : 무기를 바꿧다(원거리무기), Defalut = false : 무기를 안바꿧다(검) )
+    /// </summary>
+    public Action OnSwitchWeapon;
+
+    // hash
+
+    /// <summary>
+    /// 현재 무기가 활인지 체크 ( true : 활 )
+    /// </summary>
+    readonly int IsWeaponBowToHash = Animator.StringToHash("IsWeaponBow"); 
 
     void Awake()
     {
         inputActions = new PlayerInputActions();
         controller = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
-        sword = GetComponentInChildren<Sword>();
 
         PlayerMoveState = MoveState.Idle;
+
+        OnSwitchWeapon += OnWeaponSwitch;
     }
 
     void OnEnable()
     {
+        inputActions.Main.SwitchWeapon.performed += OnWeaponSwitchInput;
+
         #region Player Main Actions
         inputActions.Main.Enable();
         inputActions.Main.Move.performed += OnMoveInput;
@@ -219,19 +232,24 @@ public class Test_Player : MonoBehaviour
 
     #endregion
 
+
     /// <summary>
-    /// 근접무기 콜라이더를 활성화 시키는 함수
+    /// 무기 교체 함수
     /// </summary>
-    void WeaponColliderEnable()
+    private void OnWeaponSwitch()
     {
-        sword.MeleeWeaponColliderEnable();
+        bool check = animator.GetBool(IsWeaponBowToHash);
+
+        check = !check;
+        animator.SetBool(IsWeaponBowToHash, check);
     }
 
     /// <summary>
-    /// 근접무기 콜라이더를 비활성화 시키는 함수
+    /// 무기 교체 인풋
     /// </summary>
-    void WeaponColliderDisable()
+    /// <param name="context"></param>
+    private void OnWeaponSwitchInput(InputAction.CallbackContext context)
     {
-        sword.MeleeWeaponColliderDisable();
+        OnSwitchWeapon?.Invoke();
     }
 }

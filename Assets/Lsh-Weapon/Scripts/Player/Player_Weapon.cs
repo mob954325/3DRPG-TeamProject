@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,32 +17,26 @@ public class Player_Weapon : MonoBehaviour
     }
     [SerializeField] WeaponState weaponState;    // 현재 가지고 있는 무기 Enum
 
-    bool isAttack = false;                       // 공격했는지 확인
+    Sword sword;
+
+    private bool isAttack = false;                       // 공격했는지 확인
 
     // Hashes
     readonly int AttackToHash = Animator.StringToHash("Attack");            // 공격용 파라미터
     readonly int IsEquipToHash = Animator.StringToHash("IsEquip");          // 무기장비착용 여부 
-    readonly int IsWeaponBowToHash = Animator.StringToHash("IsWeaponBow");  // 현재 무기가 활인지 체크 ( true : 활 )
 
     void Start()
     {
         weaponControl = gameObject.GetComponent<Player_WeaponControl>();
         animator = gameObject.GetComponent<Animator>();
+        sword = GetComponentInChildren<Sword>();
 
         weaponControl.OnAttackEnd += DisableIsAttack;
-        weaponControl.OnSwitchWeapon += OnWeaponSwitch;
         weaponControl.OnMeleeAttack += OnMeleeAttack;
         weaponControl.OnAiming += OnAimDown;
         weaponControl.OnRangeAttack += OnRangeAttack;
     }
 
-    private void OnWeaponSwitch()
-    {
-        bool check = animator.GetBool(IsWeaponBowToHash);
-
-        check = !check;
-        animator.SetBool(IsWeaponBowToHash, check);
-    }
     private void OnMeleeAttack() // 근접무기
     {
         if (weaponState == WeaponState.Bow)
@@ -77,5 +72,21 @@ public class Player_Weapon : MonoBehaviour
     void DisableIsAttack()
     {
         isAttack = false;
+    }
+
+    /// <summary>
+    /// 근접무기 콜라이더를 활성화 시키는 함수 ( 애니메이션 이벤트 함수 )
+    /// </summary>
+    void MeleeColliderEnable()
+    {
+        sword.MeleeWeaponColliderEnable();
+    }
+
+    /// <summary>
+    /// 근접무기 콜라이더를 비활성화 시키는 함수 ( 애니메이션 이벤트 함수 )
+    /// </summary>
+    void MeleeColliderDisable()
+    {
+        sword.MeleeWeaponColliderDisable();
     }
 }

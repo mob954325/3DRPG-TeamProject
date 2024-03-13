@@ -6,7 +6,7 @@ public class Test_CameraOffset : MonoBehaviour
 {
     Test_Player player;
 
-    public Vector3 offset = Vector3.zero;
+    public Vector3 offset = new Vector3(0, 1.75f, 0);
     void Awake()
     {
         player = FindAnyObjectByType<Test_Player>();
