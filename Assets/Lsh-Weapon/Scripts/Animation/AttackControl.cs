@@ -6,11 +6,11 @@ public class AttackControl : StateMachineBehaviour
 {
     // 플레이어 공격 비활성화 하기 위한 스크립트
 
-    Test_Player player;
+    Player_WeaponControl player;
 
     void Awake()
     {
-        player = FindAnyObjectByType<Test_Player>();
+        player = FindAnyObjectByType<Player_WeaponControl>();
     }
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
