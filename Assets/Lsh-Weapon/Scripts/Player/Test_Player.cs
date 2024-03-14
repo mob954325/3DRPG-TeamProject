@@ -93,14 +93,10 @@ public class Test_Player : MonoBehaviour
         animator = GetComponent<Animator>();
 
         PlayerMoveState = MoveState.Idle;
-
-        OnSwitchWeapon += OnWeaponSwitch;
     }
 
     void OnEnable()
     {
-        inputActions.Main.SwitchWeapon.performed += OnWeaponSwitchInput;
-
         #region Player Main Actions
         inputActions.Main.Enable();
         inputActions.Main.Move.performed += OnMoveInput;
@@ -231,25 +227,4 @@ public class Test_Player : MonoBehaviour
     }
 
     #endregion
-
-
-    /// <summary>
-    /// 무기 교체 함수
-    /// </summary>
-    private void OnWeaponSwitch()
-    {
-        bool check = animator.GetBool(IsWeaponBowToHash);
-
-        check = !check;
-        animator.SetBool(IsWeaponBowToHash, check);
-    }
-
-    /// <summary>
-    /// 무기 교체 인풋
-    /// </summary>
-    /// <param name="context"></param>
-    private void OnWeaponSwitchInput(InputAction.CallbackContext context)
-    {
-        OnSwitchWeapon?.Invoke();
-    }
 }

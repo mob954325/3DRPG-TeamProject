@@ -16,6 +16,7 @@ public class Player_WeaponControl : MonoBehaviour
     public Action OnMeleeAttack; // 근접공격시 실행하는 델리게이트 , key MLB
     public Action OnRangeAttack; // 원거리 공격시 실행하는 델리게이트 , key MLB
     public Action OnAiming;     // 원거리 조준시 실행되는 델리게이트
+    public Action OnWeaponChange; // 무기 교체시 실행되는 델리게이트
 
     void Awake()
     {
@@ -30,7 +31,10 @@ public class Player_WeaponControl : MonoBehaviour
         inputActions.Sword.Attack.canceled += OnAttackInput;
 
         inputActions.Bow.Shot.performed += OnRangeShotInput;
-        inputActions.Bow.AimDown.performed += OnAimDownInput;        
+        inputActions.Bow.AimDown.performed += OnAimDownInput;
+
+        inputActions.Sword.ChangeWeapon.performed += OnChangeToBowInput;
+        inputActions.Bow.ChangeWeapon.performed += OnChangeToSwordInput;
     }
 
     void OnDisable()
@@ -58,5 +62,21 @@ public class Player_WeaponControl : MonoBehaviour
     private void OnAimDownInput(InputAction.CallbackContext context)
     {
         OnAiming?.Invoke();
+    }
+
+    private void OnChangeToSwordInput(InputAction.CallbackContext context)
+    {
+        OnWeaponChange?.Invoke();
+
+        inputActions.Sword.Enable();
+        inputActions.Bow.Disable();
+    }
+
+    private void OnChangeToBowInput(InputAction.CallbackContext context)
+    {
+        OnWeaponChange?.Invoke();
+
+        inputActions.Sword.Disable();
+        inputActions.Bow.Enable();
     }
 }

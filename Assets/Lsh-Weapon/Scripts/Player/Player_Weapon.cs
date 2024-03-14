@@ -35,6 +35,19 @@ public class Player_Weapon : MonoBehaviour
         weaponControl.OnMeleeAttack += OnMeleeAttack;
         weaponControl.OnAiming += OnAimDown;
         weaponControl.OnRangeAttack += OnRangeAttack;
+        weaponControl.OnWeaponChange += OnWeaponChange;
+    }
+
+    private void OnWeaponChange()
+    {
+        if (weaponState == WeaponState.Sword)
+        {
+            weaponState = WeaponState.Bow;
+        }
+        else if (weaponState == WeaponState.Bow)
+        {
+            weaponState = WeaponState.Sword;
+        }
     }
 
     private void OnMeleeAttack() // 근접무기
