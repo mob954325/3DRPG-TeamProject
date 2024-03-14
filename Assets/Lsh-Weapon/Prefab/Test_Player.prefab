@@ -763,8 +763,8 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
+  m_UseGravity: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
@@ -783,7 +783,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -927,7 +927,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8321377576186704524}
-  - component: {fileID: 316772970881304086}
+  - component: {fileID: 2258881514481286884}
+  - component: {fileID: 3392596768362606032}
+  - component: {fileID: 7650839031959765871}
   - component: {fileID: 2001319301749217963}
   - component: {fileID: 78135654199824948}
   - component: {fileID: 277215569695915141}
@@ -956,7 +958,7 @@ Transform:
   - {fileID: 652067596063983946}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &316772970881304086
+--- !u!114 &2258881514481286884
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -965,17 +967,38 @@ MonoBehaviour:
   m_GameObject: {fileID: 2262958062031753340}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2d6931859714e5a4aa1056e421d4c29a, type: 3}
+  m_Script: {fileID: 11500000, guid: adff9541c06b3614885a195e1f4f4482, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 3
+  followCam: {fileID: 0}
+  rotatePower: 5
+  isLook: 0
+--- !u!114 &3392596768362606032
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2262958062031753340}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18797ef11ae227c458fba4cea3f8c87b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7650839031959765871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2262958062031753340}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98fba1b2b866b62418997a68c9726cdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   weaponState: 0
-  moveSpeed: 5
-  smoothInputSpeed: 0.2
-  followCam: {fileID: 0}
-  rotatePower: 5
-  currentMoveVector: {x: 0, y: 0, z: 0}
-  isAttack: 0
-  isLook: 0
 --- !u!143 &2001319301749217963
 CharacterController:
   m_ObjectHideFlags: 0
@@ -1051,7 +1074,7 @@ MonoBehaviour:
   m_ActionEvents: []
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: KeyBoard-Mouse
-  m_DefaultActionMap: Sword
+  m_DefaultActionMap: Main
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
 --- !u!1 &2631866424394311421

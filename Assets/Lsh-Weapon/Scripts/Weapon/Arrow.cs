@@ -4,15 +4,28 @@ using UnityEngine;
 
 public class Arrow : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    Rigidbody rigid;
+
+    public float power = 5f;
+
+    void Awake()
     {
-        
+        rigid = GetComponent<Rigidbody>();
+    }
+    void OnEnable()
+    {
+        rigid.AddForce(Vector3.forward * power, ForceMode.Impulse);
+        //rigid.AddForceAtPosition(transform.)
     }
 
-    // Update is called once per frame
-    void Update()
+    void OnTriggerEnter(Collider other)
     {
-        
+        rigid.useGravity = false;
+        rigid.velocity = Vector3.zero;  
+        gameObject.transform.parent = other.transform;
+
+        // 적 데미지 스크립트
+
+        // destory(gameObjet, 3f); // 3초뒤 파괴
     }
 }
