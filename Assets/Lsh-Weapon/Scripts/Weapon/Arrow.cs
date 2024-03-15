@@ -14,8 +14,7 @@ public class Arrow : MonoBehaviour
     }
     void OnEnable()
     {
-        rigid.AddForce(Vector3.forward * power, ForceMode.Impulse);
-        //rigid.AddForceAtPosition(transform.)
+        //rigid.AddForce(Vector3.forward * power, ForceMode.Impulse);
     }
 
     void OnTriggerEnter(Collider other)

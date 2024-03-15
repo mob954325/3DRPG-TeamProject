@@ -79,13 +79,6 @@ public class Test_Player : MonoBehaviour
     /// </summary>
     public Action OnSwitchWeapon;
 
-    // hash
-
-    /// <summary>
-    /// 현재 무기가 활인지 체크 ( true : 활 )
-    /// </summary>
-    readonly int IsWeaponBowToHash = Animator.StringToHash("IsWeaponBow"); 
-
     void Awake()
     {
         inputActions = new PlayerInputActions();
